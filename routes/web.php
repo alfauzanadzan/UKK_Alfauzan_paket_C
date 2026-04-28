@@ -10,17 +10,25 @@ use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
-| GUEST
+| GUEST ROUTES
 |--------------------------------------------------------------------------
 */
-Route::middleware('guest')->group(function () {
-    Route::get('/', [AuthController::class, 'loginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.process');
+
+// LOGIN PAGE
+Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
+
+// ROOT → LOGIN
+Route::get('/', function () {
+    return redirect('/login');
 });
+
+// LOGIN PROCESS
+Route::post('/login', [AuthController::class, 'login'])->name('login.process');
+
 
 /*
 |--------------------------------------------------------------------------
-| AUTH
+| AUTH ROUTES
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
@@ -28,72 +36,64 @@ Route::middleware('auth')->group(function () {
     /*
     | DASHBOARD
     */
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 
     /*
-    | LOGOUT
+    | LOGOUT (FIX PENTING)
     */
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('logout');
 
     /*
-    |--------------------------------------------------------------------------
     | BOOKS
-    |--------------------------------------------------------------------------
     */
-    Route::prefix('books')->name('books.')->group(function () {
+    Route::prefix('books')->group(function () {
 
-        Route::get('/', [BookController::class, 'index'])->name('index');
-        Route::post('/', [BookController::class, 'store'])->name('store');
+        Route::get('/', [BookController::class, 'index'])->name('books.index');
+        Route::post('/', [BookController::class, 'store'])->name('books.store');
 
-        Route::get('/edit/{id}', [BookController::class, 'edit'])->name('edit');
-        Route::put('/update/{id}', [BookController::class, 'update'])->name('update');
+        Route::get('/edit/{id}', [BookController::class, 'edit'])->name('books.edit');
+        Route::put('/update/{id}', [BookController::class, 'update'])->name('books.update');
 
-        // FIX: pakai destroy (bukan delete)
-        Route::delete('/delete/{id}', [BookController::class, 'destroy'])->name('destroy');
+        Route::delete('/delete/{id}', [BookController::class, 'destroy'])->name('books.destroy');
     });
 
     /*
-    |--------------------------------------------------------------------------
-    | LAPORAN
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-
-    /*
-    |--------------------------------------------------------------------------
     | PEMINJAMAN
-    |--------------------------------------------------------------------------
     */
-    Route::prefix('peminjaman')->name('peminjaman.')->group(function () {
+    Route::prefix('peminjaman')->group(function () {
 
-        Route::get('/', [PeminjamanController::class, 'index'])->name('index');
-        Route::post('/store', [PeminjamanController::class, 'store'])->name('store');
+        Route::get('/', [PeminjamanController::class, 'index'])->name('peminjaman.index');
+        Route::post('/store', [PeminjamanController::class, 'store'])->name('peminjaman.store');
 
-        Route::get('/edit/{id}', [PeminjamanController::class, 'edit'])->name('edit');
-        Route::put('/update/{id}', [PeminjamanController::class, 'update'])->name('update');
+        Route::get('/edit/{id}', [PeminjamanController::class, 'edit'])->name('peminjaman.edit');
+        Route::put('/update/{id}', [PeminjamanController::class, 'update'])->name('peminjaman.update');
 
-        Route::post('/kembali/{id}', [PeminjamanController::class, 'kembali'])->name('kembali');
+        Route::post('/kembali/{id}', [PeminjamanController::class, 'kembali'])->name('peminjaman.kembali');
 
-        // FIX: pakai destroy biar konsisten
-        Route::delete('/delete/{id}', [PeminjamanController::class, 'destroy'])->name('destroy');
+        Route::delete('/delete/{id}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
     });
 
     /*
-    |--------------------------------------------------------------------------
-    | USER MANAGEMENT
-    |--------------------------------------------------------------------------
+    | LAPORAN
     */
-    Route::prefix('users')->name('users.')->group(function () {
+    Route::get('/laporan', [LaporanController::class, 'index'])
+        ->name('laporan.index');
 
-        Route::get('/', [UserController::class, 'index'])->name('index');
-        Route::get('/create', [UserController::class, 'create'])->name('create');
-        Route::post('/store', [UserController::class, 'store'])->name('store');
+    /*
+    | USERS
+    */
+    Route::prefix('users')->group(function () {
 
-        Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');
-        Route::put('/update/{id}', [UserController::class, 'update'])->name('update');
+        Route::get('/', [UserController::class, 'index'])->name('users.index');
+        Route::get('/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/', [UserController::class, 'store'])->name('users.store');
 
-        // FIX: destroy
-        Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('destroy');
+        Route::get('/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/update/{id}', [UserController::class, 'update'])->name('users.update');
+
+        Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 
 });

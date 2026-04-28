@@ -50,7 +50,7 @@
             <a href="{{ url('/users') }}"
                class="bg-white p-6 rounded-xl shadow hover:shadow-lg hover:-translate-y-1 transition">
                 <h2 class="text-lg font-semibold">👤 Kelola User</h2>
-                <p class="text-gray-500 mt-2">Tambah admin, petugas, peminjam</p>
+                <p class="text-gray-500 mt-2">Tambah petugas, peminjam</p>
             </a>
 
         </div>
