@@ -37,15 +37,19 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | BOOKS (ADMIN + PETUGAS)
+    | BOOKS
     |--------------------------------------------------------------------------
     */
     Route::prefix('books')->name('books.')->group(function () {
+
         Route::get('/', [BookController::class, 'index'])->name('index');
         Route::post('/', [BookController::class, 'store'])->name('store');
+
         Route::get('/edit/{id}', [BookController::class, 'edit'])->name('edit');
         Route::put('/update/{id}', [BookController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [BookController::class, 'destroy'])->name('delete');
+
+        // FIX: pakai destroy (bukan delete)
+        Route::delete('/delete/{id}', [BookController::class, 'destroy'])->name('destroy');
     });
 
     /*
@@ -57,7 +61,7 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | PEMINJAMAN (FULL CRUD)
+    | PEMINJAMAN
     |--------------------------------------------------------------------------
     */
     Route::prefix('peminjaman')->name('peminjaman.')->group(function () {
@@ -65,20 +69,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [PeminjamanController::class, 'index'])->name('index');
         Route::post('/store', [PeminjamanController::class, 'store'])->name('store');
 
-        // EDIT
         Route::get('/edit/{id}', [PeminjamanController::class, 'edit'])->name('edit');
         Route::put('/update/{id}', [PeminjamanController::class, 'update'])->name('update');
 
-        // RETURN BOOK
         Route::post('/kembali/{id}', [PeminjamanController::class, 'kembali'])->name('kembali');
 
-        // DELETE
-        Route::delete('/delete/{id}', [PeminjamanController::class, 'delete'])->name('delete');
+        // FIX: pakai destroy biar konsisten
+        Route::delete('/delete/{id}', [PeminjamanController::class, 'destroy'])->name('destroy');
     });
 
     /*
     |--------------------------------------------------------------------------
-    | USER MANAGEMENT (ADMIN ONLY)
+    | USER MANAGEMENT
     |--------------------------------------------------------------------------
     */
     Route::prefix('users')->name('users.')->group(function () {
@@ -87,10 +89,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [UserController::class, 'create'])->name('create');
         Route::post('/store', [UserController::class, 'store'])->name('store');
 
-        // EDIT USER
         Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');
         Route::put('/update/{id}', [UserController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('delete');
+
+        // FIX: destroy
+        Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('destroy');
     });
 
 });

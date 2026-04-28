@@ -8,15 +8,11 @@ use App\Models\Book;
 class BookController extends Controller
 {
     // ====================
-    // LIST BOOK (ADMIN + PETUGAS)
+    // LIST
     // ====================
     public function index()
     {
-        $user = auth()->user();
-
-        if (!$user || !in_array($user->role, ['admin', 'petugas'])) {
-            abort(403);
-        }
+        $this->authorizeRole();
 
         $books = Book::all();
         return view('books.index', compact('books'));
@@ -27,11 +23,7 @@ class BookController extends Controller
     // ====================
     public function store(Request $request)
     {
-        $user = auth()->user();
-
-        if (!$user || !in_array($user->role, ['admin', 'petugas'])) {
-            abort(403);
-        }
+        $this->authorizeRole();
 
         $request->validate([
             'judul' => 'required',
@@ -45,7 +37,7 @@ class BookController extends Controller
             'judul','penulis','penerbit','tahun','stok'
         ]));
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Buku ditambahkan');
     }
 
     // ====================
@@ -53,11 +45,7 @@ class BookController extends Controller
     // ====================
     public function edit($id)
     {
-        $user = auth()->user();
-
-        if (!$user || !in_array($user->role, ['admin', 'petugas'])) {
-            abort(403);
-        }
+        $this->authorizeRole();
 
         $book = Book::findOrFail($id);
         return view('books.edit', compact('book'));
@@ -68,11 +56,7 @@ class BookController extends Controller
     // ====================
     public function update(Request $request, $id)
     {
-        $user = auth()->user();
-
-        if (!$user || !in_array($user->role, ['admin', 'petugas'])) {
-            abort(403);
-        }
+        $this->authorizeRole();
 
         $request->validate([
             'judul' => 'required',
@@ -87,22 +71,30 @@ class BookController extends Controller
             'judul','penulis','penerbit','tahun','stok'
         ]));
 
-        return redirect('/books');
+        return redirect('/books')->with('success', 'Buku diupdate');
     }
 
     // ====================
-    // DELETE
+    // DELETE (FIXED)
     // ====================
-    public function delete($id)
+    public function destroy($id)
+    {
+        $this->authorizeRole();
+
+        Book::destroy($id);
+
+        return redirect()->back()->with('success', 'Buku dihapus');
+    }
+
+    // ====================
+    // ROLE CHECK (biar gak ulang-ulang)
+    // ====================
+    private function authorizeRole()
     {
         $user = auth()->user();
 
         if (!$user || !in_array($user->role, ['admin', 'petugas'])) {
             abort(403);
         }
-
-        Book::destroy($id);
-
-        return redirect()->back();
     }
 }
